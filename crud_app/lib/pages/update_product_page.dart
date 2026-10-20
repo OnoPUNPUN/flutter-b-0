@@ -91,7 +91,7 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
               SizedBox(
                 width: double.infinity,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: _updateProduct,
                   child: Text("Update Product"),
                 ),
               ),

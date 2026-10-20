@@ -1,7 +1,10 @@
 import 'package:crud_app/models/product.dart';
 import 'package:crud_app/pages/add_product_page.dart';
+import 'package:crud_app/pages/update_product_page.dart';
+import 'package:crud_app/widgets/product_action_menu.dart';
 import 'package:crud_app/widgets/product_card.dart';
 import 'package:flutter/material.dart';
+import 'package:popover/popover.dart';
 
 class HomePage extends StatefulWidget {
   const HomePage({super.key});
@@ -27,6 +30,12 @@ class _HomePageState extends State<HomePage> {
   ];
   @override
   Widget build(BuildContext context) {
+    void _showMessage(String message) {
+      ScaffoldMessenger.of(context)
+        ..hideCurrentSnackBar()
+        ..showSnackBar(SnackBar(content: Text(message)));
+    }
+
     Future<void> _gotoAddPage() async {
       final product = await Navigator.push<Product>(
         context,
@@ -37,8 +46,56 @@ class _HomePageState extends State<HomePage> {
 
       setState(() {
         _products.add(product);
-        print(product.name);
       });
+      _showMessage("Producte Added");
+    }
+
+    Future<void> _goToUpdatePage(int index) async {
+      final updatedProduct = await Navigator.push<Product>(
+        context,
+        MaterialPageRoute(
+          builder: (context) => UpdateProductPage(product: _products[index]),
+        ),
+      );
+
+      if (!mounted || updatedProduct == null) return;
+      setState(() {
+        _products[index] = updatedProduct;
+      });
+
+      _showMessage("Product Updated");
+    }
+
+    void _deleteProduct(int index) {
+      setState(() {
+        _products.removeAt(index);
+      });
+      _showMessage("Product Deleted");
+    }
+
+    Future<void> _showPopOverMenu(BuildContext cardContext, int index) async {
+      final action = await showPopover(
+        context: cardContext,
+        bodyBuilder: (context) => const ProductActionMenu(),
+        direction: PopoverDirection.bottom,
+        width: 150,
+        style: PopoverStyle(
+          backgroundColor: Colors.white,
+          barrierColor: Colors.transparent,
+        ),
+      );
+
+      if (!mounted || action == null) return;
+
+      if (index >= _products.length) {
+        return;
+      }
+
+      if (action == "update") {
+        await _goToUpdatePage(index);
+      } else if (action == "delete") {
+        _deleteProduct(index);
+      }
     }
 
     return Scaffold(
@@ -56,8 +113,13 @@ class _HomePageState extends State<HomePage> {
                 final product = _products[index];
 
                 return Builder(
-                  builder: (context) {
-                    return ProductCard(product: product, onLongPressed: () {});
+                  builder: (cardContext) {
+                    return ProductCard(
+                      product: product,
+                      onLongPressed: () {
+                        _showPopOverMenu(cardContext, index);
+                      },
+                    );
                   },
                 );
               },
