@@ -85,4 +85,13 @@ class _AddProductPageState extends State<AddProductPage> {
       ),
     );
   }
+
+  @override
+  void dispose() {
+    _nameTEController.dispose();
+    _imageTEController.dispose();
+    _priceTEController.dispose();
+    _descriptionTEController.dispose();
+    super.dispose();
+  }
 }

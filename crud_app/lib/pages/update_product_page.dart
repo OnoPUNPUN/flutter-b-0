@@ -45,6 +45,7 @@ class _UpdateProductPageState extends State<UpdateProductPage> {
     }
 
     final updatedProduct = Product(
+      id: widget.product.id,
       name: _nameTEController.text.trim(),
       imageUrl: _imageTEController.text.trim(),
       price: price,
