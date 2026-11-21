@@ -1,5 +1,6 @@
-import 'package:class_1/cubit/counter_cubit.dart';
-import 'package:class_1/pages/home_page.dart';
+import 'package:class_1/cubit_part_2/cubit/todo_cubit.dart';
+import 'package:class_1/cubit_part_2/pages/add_todo_page.dart';
+import 'package:class_1/cubit_part_2/pages/todo_list_page.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:material_ui/material_ui.dart';
 
@@ -13,11 +14,15 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return BlocProvider(
-      create: (context) => CounterCubit(),
+      create: (context) => TodoCubit(),
       child: MaterialApp(
         title: 'Flutter Demo',
         theme: ThemeData(colorScheme: .fromSeed(seedColor: Colors.deepPurple)),
-        home: const HomePage(title: 'Flutter Demo Home Page'),
+        initialRoute: TodoListPage.name,
+        routes: {
+          TodoListPage.name: (_) => const TodoListPage(),
+          AddTodoPage.name: (_) => const AddTodoPage(),
+        },
       ),
     );
   }
